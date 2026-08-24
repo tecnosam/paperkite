@@ -1,0 +1,110 @@
+name: Release chat-service
+
+# Same reasoning as release-browser.yml: this is a monorepo, so releases
+# are scoped by tag prefix rather than a shared "release published"
+# event. Only fires on tags shaped like `chat-service-v0.1.1` (created
+# by `make chat-service-tag`, see /Makefile).
+on:
+  push:
+    tags:
+      - 'chat-service-v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build, e.g. chat-service-v0.1.1'
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-chat-service-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  TAG: ${{ github.event.inputs.tag || github.ref_name }}
+
+defaults:
+  run:
+    working-directory: chat-service
+
+jobs:
+  binaries:
+    name: Build binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          cache-dependency-path: chat-service/go.sum
+
+      # Go cross-compiles without needing OS-specific runners, so one
+      # Linux runner covers every target platform, unlike the browser's
+      # Electron build. Builds cmd/ops too, not just cmd/server - a
+      # droplet running the ops daemon (see chat-service/deploy/) should
+      # be able to just download it, not need a Go toolchain installed.
+      - name: Cross-compile
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          targets=("linux/amd64" "linux/arm64" "darwin/amd64" "darwin/arm64" "windows/amd64")
+          for target in "${targets[@]}"; do
+            goos="${target%/*}"
+            goarch="${target#*/}"
+            ext=""
+            [ "$goos" = "windows" ] && ext=".exe"
+            for cmd in server ops; do
+              out="dist/chat-service-${cmd}-${goos}-${goarch}${ext}"
+              echo "building $out"
+              GOOS="$goos" GOARCH="$goarch" CGO_ENABLED=0 go build -trimpath -o "$out" "./cmd/$cmd"
+            done
+          done
+
+      - name: Checksums
+        run: cd dist && sha256sum * > checksums.txt
+
+      - name: Attach artifacts to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          files: chat-service/dist/*
+
+  # Optional: notify a running ops daemon (see cmd/ops) to pull this build
+  # and swap it in. Skipped entirely unless OPS_WEBHOOK_URL is configured
+  # (Settings -> Secrets and variables -> Actions -> Variables) - nothing
+  # here requires it to exist. See chat-service/packaging/README.md for
+  # the full setup, including the OPS_JWT_SECRET this needs.
+  notify-ops:
+    name: Notify ops daemon
+    needs: binaries
+    if: ${{ vars.OPS_WEBHOOK_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          cache-dependency-path: chat-service/go.sum
+
+      - name: Mint deploy token and notify
+        env:
+          OPS_JWT_SECRET: ${{ secrets.OPS_JWT_SECRET }}
+        run: |
+          set -euo pipefail
+          VERSION="${TAG#chat-service-v}"
+          LINUX_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/chat-service-server-linux-amd64"
+          TOKEN=$(go run ./cmd/deploytoken -version "$VERSION" -linux "$LINUX_URL")
+          curl -sf -X POST "${{ vars.OPS_WEBHOOK_URL }}/deploy" \
+            -H "Authorization: Bearer $TOKEN" \
+            --max-time 90

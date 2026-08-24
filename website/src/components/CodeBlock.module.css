@@ -1,0 +1,28 @@
+.block {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line-strong);
+  overflow: hidden;
+  background: var(--paper-dim);
+  margin: 14px 0 22px;
+}
+
+.label {
+  padding: 8px 14px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  border-bottom: 1px solid var(--line);
+}
+
+.pre {
+  margin: 0;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--ink);
+}

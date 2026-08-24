@@ -1,0 +1,135 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(10px) saturate(1.1);
+  border-bottom: 1px solid var(--line);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  height: 68px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  flex: 1;
+  justify-content: center;
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  padding: 6px 2px;
+  border-bottom: 1.5px solid transparent;
+}
+.navLink:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+.navLinkMobileCta {
+  display: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.iconLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  color: var(--ink-soft);
+}
+.iconLink:hover {
+  color: var(--ink);
+  background: var(--hover-wash);
+}
+
+.burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: transparent;
+  padding: 0 8px;
+}
+.burger span {
+  display: block;
+  height: 1.5px;
+  background: var(--ink);
+  border-radius: 1px;
+}
+
+@media (max-width: 860px) {
+  .nav {
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    background: var(--paper-raised);
+    border-bottom: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-raised);
+    padding: 10px 28px 18px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height var(--base) var(--ease), opacity var(--base) var(--ease);
+  }
+  .navOpen {
+    max-height: 320px;
+    opacity: 1;
+  }
+  .navLink {
+    width: 100%;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .navLinkMobileCta {
+    display: inline-flex;
+  }
+  .iconLink {
+    display: none;
+  }
+  .burger {
+    display: flex;
+  }
+  .actions .btn {
+    display: none;
+  }
+}

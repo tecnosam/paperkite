@@ -1,0 +1,103 @@
+.section {
+  padding: 96px 0;
+}
+
+.head {
+  max-width: 560px;
+  margin-bottom: 48px;
+}
+
+.title {
+  margin-top: 14px;
+  font-size: clamp(28px, 3.4vw, 38px);
+  line-height: 1.12;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.card {
+  padding: 26px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper-raised);
+  animation: rise-in var(--base) var(--ease) both;
+  transition: border-color var(--fast) var(--ease), transform var(--fast) var(--ease), box-shadow var(--fast) var(--ease);
+}
+
+/* Re-declared locally: Lightning CSS scopes animation-name identifiers
+ * per module file, so a keyframes block defined only in globals.css
+ * doesn't resolve when referenced from a .module.css. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+.card:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-soft);
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--accent-glow);
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.card h3 {
+  font-size: 16.5px;
+  margin-bottom: 8px;
+}
+
+.card p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.cardMuted {
+  background: var(--paper-dim);
+  display: flex;
+  align-items: center;
+}
+
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.checklist span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.checklist svg {
+  flex-shrink: 0;
+  color: var(--sky);
+}
+
+@media (max-width: 980px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

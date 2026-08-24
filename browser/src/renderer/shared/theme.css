@@ -1,0 +1,196 @@
+/**
+ * Shared design tokens for the chrome and chat renderers - the
+ * "Paperkite" look: warm paper, ink, a kite-red accent for primary
+ * actions, and a sky-blue second accent (kite string against the sky)
+ * for links and quieter interactive cues, so the palette reads as more
+ * than one hue without losing the minimal, paper-and-ink identity.
+ * Both renderers import this file first so their surfaces read as one
+ * continuous window instead of two apps stitched together.
+ */
+@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource/work-sans/400.css';
+@import '@fontsource/work-sans/500.css';
+@import '@fontsource/work-sans/600.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+
+:root,
+:root[data-theme='light'] {
+  --paper: #f4ecdc;
+  --paper-raised: #faf4e8;
+  --paper-dim: #e8dcc2;
+  --ink: #211c17;
+  --ink-soft: #6f6353;
+  --ink-faint: #a89d89;
+  --accent: #c44a3a;
+  --accent-hover: #ab3d2f;
+  --accent-ink: #fdf6ec;
+  --accent-glow: rgba(196, 74, 58, 0.14);
+  --sky: #3d6d94;
+  --sky-hover: #315a7b;
+  --sky-glow: rgba(61, 109, 148, 0.16);
+  /* A third, sparingly-used hue - just for "this succeeded" confirmations
+   * (e.g. a claimed username) where the warm accent red would read as an
+   * error instead. Muted to match the palette rather than a bright,
+   * saturated green. */
+  --success: #4a7c4e;
+
+  /* Solid, slightly-darker-than-paper edges read crisper than a low-alpha
+   * wash on a warm background - that's what made borders hard to spot. */
+  --line: #e4d7b8;
+  --line-strong: #cab68a;
+  --shadow-soft: 0 2px 10px rgba(33, 28, 23, 0.07);
+  --shadow-raised: 0 16px 40px -8px rgba(33, 28, 23, 0.22);
+  --scrim: rgba(33, 28, 23, 0.4);
+  --hover-wash: rgba(33, 28, 23, 0.05);
+  --hover-wash-strong: rgba(33, 28, 23, 0.08);
+}
+
+/* Dark mode keeps the same warm paper/ink/kite identity, just inverted -
+ * a deep charcoal (not cold blue-black) with the accents brightened for
+ * contrast. Applied via data-theme, set by main from nativeTheme (see
+ * WindowManager) rather than a bare `prefers-color-scheme` media query,
+ * so the in-app System/Light/Dark override in Settings actually works. */
+:root[data-theme='dark'] {
+  --paper: #1a1713;
+  --paper-raised: #221e18;
+  --paper-dim: #14110d;
+  --ink: #f1e8d8;
+  --ink-soft: #b3a48d;
+  --ink-faint: #6e6353;
+  --accent: #e46953;
+  --accent-hover: #ec8271;
+  --accent-ink: #1a1713;
+  --accent-glow: rgba(228, 105, 83, 0.22);
+  --sky: #7cabd4;
+  --sky-hover: #93bce0;
+  --sky-glow: rgba(124, 171, 212, 0.22);
+  --success: #7fb87f;
+
+  --line: #342c22;
+  --line-strong: #4a3f30;
+  --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.25);
+  --shadow-raised: 0 16px 40px -8px rgba(0, 0, 0, 0.55);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --hover-wash: rgba(241, 232, 216, 0.06);
+  --hover-wash-strong: rgba(241, 232, 216, 0.1);
+}
+
+:root {
+  --font-display: 'Bricolage Grotesque Variable', -apple-system, sans-serif;
+  --font-ui: 'Work Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* One motion language, reused everywhere: quick, no bounce-overshoot,
+   * so it reads as "responsive" rather than "decorative". */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --fast: 120ms;
+  --base: 200ms;
+}
+
+html {
+  background: var(--paper);
+  transition: background-color var(--base) var(--ease);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  user-select: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: default;
+  transition: background-color var(--fast) var(--ease), color var(--fast) var(--ease),
+    border-color var(--fast) var(--ease), transform var(--fast) var(--ease), opacity var(--fast) var(--ease);
+}
+button:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+input,
+textarea {
+  font-family: inherit;
+  transition: border-color var(--fast) var(--ease), box-shadow var(--fast) var(--ease);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px) scale(0.97);
+  }
+}
+
+.error-boundary {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  background: var(--paper);
+}
+.error-boundary__kite {
+  font-size: 34px;
+  transform: rotate(-8deg);
+  opacity: 0.8;
+}
+.error-boundary p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.error-boundary button {
+  height: 32px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 9px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.error-boundary button:hover {
+  background: var(--accent-hover);
+}

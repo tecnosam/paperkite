@@ -1,0 +1,39 @@
+[Unit]
+Description=Paperkite ops daemon (chat-service deploy webhook + process supervisor)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=paperkite
+Group=paperkite
+WorkingDirectory=/opt/paperkite
+EnvironmentFile=/etc/paperkite/ops.env
+ExecStart=/opt/paperkite/bin/ops
+Restart=on-failure
+RestartSec=5
+# The app process ops launches (cmd/server) is a *child* of this one -
+# when systemd stops or restarts this unit, the child should go down
+# with it rather than being orphaned and left holding :8080/:50051.
+KillMode=control-group
+
+# Standard least-privilege hardening. Not a sandbox against a
+# compromised OPS_JWT_SECRET - the whole point of this daemon is to
+# download and execute arbitrary binaries on that token's say-so, see
+# deploy/README.md's security note.
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/paperkite
+
+# Lets chat-service-server (launched as this process's *child* via
+# os/exec - see internal/ops/launcher.go) bind :443 for its Let's
+# Encrypt TLS listener without running as root. Ambient capabilities are
+# inherited across fork/exec by an unprivileged process, so this covers
+# every binary ops ever launches, including ones downloaded fresh by a
+# future auto-deploy - no per-binary setcap step needed. A no-op if
+# PUBLIC_HOSTNAME is unset and the TLS listener never starts.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,147 @@
+name: Release browser binaries
+
+# This is a monorepo with three independently-versioned projects, so a
+# generic "release published" trigger isn't safe here: it can't tell
+# whether it was the browser, chat-service, or website that actually
+# bumped. Instead this only fires on tags shaped like `browser-v1.2.3`
+# (created by `make browser-tag`, see /Makefile), so the tag itself is
+# the source of truth for what to build.
+on:
+  push:
+    tags:
+      - 'browser-v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build, e.g. browser-v1.0.1'
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-browser-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  TAG: ${{ github.event.inputs.tag || github.ref_name }}
+
+defaults:
+  run:
+    working-directory: browser
+
+jobs:
+  build:
+    name: Build (${{ matrix.platform }}-${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS is deliberately not built here right now - without a
+          # real Apple Developer ID (osxSign/osxNotarize in
+          # forge.config.ts, gated on repo secrets), a CI-built .app only
+          # ever gets ad-hoc signed, which fails Gatekeeper's assessment
+          # once downloaded ("is damaged and can't be opened") - not a
+          # usable release. Mac users build from source instead (`cd
+          # browser && npm install && npm run make`) until those
+          # credentials exist; re-add a macos-latest entry here once
+          # they do.
+          - os: windows-latest
+            platform: win32
+            arch: x64
+          # Cross-compiled from the same x64 runner, not a native arm64
+          # Windows runner - GitHub doesn't offer one on the free tier.
+          # Works because the app has no native (node-gyp) dependencies;
+          # electron-packager just downloads the prebuilt win32/arm64
+          # Electron distribution and repackages it, no compilation of
+          # anything happens on this machine either way. What this can't
+          # do: actually run the resulting .exe to smoke-test it - an x64
+          # Windows machine can't execute arm64 binaries - so that step
+          # is skipped for this entry specifically. MakerSquirrel on
+          # arm64 is also genuinely unverified (untested combination);
+          # if it turns out broken, the fallback is dropping Squirrel
+          # for this one arch and keeping just the zip.
+          - os: windows-latest
+            platform: win32
+            arch: arm64
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+          # Native arm64 runner (free for public repos) - no
+          # cross-compilation/QEMU involved, electron-packager just
+          # builds for whatever architecture it's actually running on.
+          # This exists because a user tried installing the x64 .deb on
+          # arm64 Ubuntu (GNOME Software just spins forever on an
+          # architecture mismatch instead of a clear error).
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arch: arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: browser/package-lock.json
+
+      # electron-forge's deb/rpm makers shell out to dpkg/fakeroot and
+      # rpmbuild. Ubuntu runners ship dpkg but not the other two. xvfb
+      # gives the smoke test below a display to open real windows on -
+      # this runner has no X server otherwise.
+      - name: Install Linux packaging tools
+        if: matrix.platform == 'linux'
+        run: sudo apt-get update && sudo apt-get install -y fakeroot rpm xvfb
+
+      - name: Install dependencies
+        run: npm ci
+
+      # --arch is a no-op for the natively-matching entries (electron-forge
+      # already defaults to the host's own arch) and is what actually
+      # makes the win32/arm64 cross-compile happen on an x64 runner.
+      - name: Build binaries
+        run: npx electron-forge make --arch=${{ matrix.arch }}
+
+      # Actually launches the packaged app and confirms both windows
+      # render real content, not just that packaging exited 0 - a build
+      # can "succeed" while silently shipping blank windows (see
+      # scripts/smoke-test.js for the incident that prompted this).
+      # Skipped for win32/arm64 specifically: that binary is cross-compiled
+      # on an x64 runner, which can't execute an arm64 .exe to test it.
+      - name: Smoke test packaged app (Linux)
+        if: matrix.platform == 'linux'
+        run: xvfb-run -a node --experimental-websocket scripts/smoke-test.js
+      - name: Smoke test packaged app
+        if: matrix.platform == 'win32' && matrix.arch == 'x64'
+        run: node --experimental-websocket scripts/smoke-test.js
+
+      # Pure Node so it behaves the same on all runners instead of
+      # relying on shasum / sha256sum / Get-FileHash being present.
+      # Filename includes arch since two matrix entries now share
+      # platform: linux (x64 and arm64) - platform alone would collide.
+      - name: Generate checksums
+        run: node scripts/checksum.js out/make checksums/${{ matrix.platform }}-${{ matrix.arch }}-checksums.txt
+
+      - name: Attach artifacts to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          # softprops/action-gh-release creates the release if this tag
+          # doesn't have one yet, so pushing the tag alone is enough. Not
+          # using generate_release_notes: GitHub's auto-notes pick the
+          # "previous tag" chronologically across the whole repo, not
+          # scoped to browser-v* tags, so with three components tagging
+          # independently they'd likely pull in chat-service/website
+          # commits. Write the release body by hand instead.
+          files: |
+            browser/out/make/**/*.zip
+            browser/out/make/**/*.exe
+            browser/out/make/**/*.nupkg
+            browser/out/make/**/*.deb
+            browser/out/make/**/*.rpm
+            browser/checksums/*.txt

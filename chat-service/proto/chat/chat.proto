@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "github.com/paperkite/chat-service/gen/chat";
+
+service Chat {
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+}
+
+message ChatMessage {
+  string id        = 1;
+  string room      = 2;
+  string sender    = 3;
+  string content   = 4;
+  int64  timestamp = 5;
+}
+
+message SendMessageRequest {
+  string token   = 1; // JWT from /connect
+  string content = 2;
+}
+
+message SendMessageResponse {
+  string id = 1;
+}
+

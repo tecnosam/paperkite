@@ -1,0 +1,127 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 76px 0 96px;
+}
+
+.kiteFloat {
+  position: absolute;
+  top: 8%;
+  right: 6%;
+  opacity: 0.16;
+  animation: drift 7s var(--ease) infinite;
+  z-index: 0;
+}
+
+.grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 56px;
+}
+
+.copy {
+  animation: rise-in var(--slow) var(--ease) both;
+}
+
+.eyebrowDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.headline {
+  margin: 18px 0 22px;
+  font-size: clamp(38px, 5.4vw, 60px);
+  line-height: 1.04;
+  color: var(--ink);
+}
+
+.headlineAccent {
+  color: var(--accent);
+}
+
+.sub {
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}
+
+.metaSep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+}
+
+.metaLink {
+  color: var(--sky);
+  font-weight: 500;
+}
+.metaLink:hover {
+  color: var(--sky-hover);
+}
+
+.visual {
+  animation: rise-in var(--slow) var(--ease) both;
+  animation-delay: 80ms;
+}
+
+@media (max-width: 980px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+  .visual {
+    order: -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero {
+    padding: 48px 0 64px;
+  }
+  .kiteFloat {
+    display: none;
+  }
+}
+
+/* Re-declared locally: Lightning CSS scopes animation-name identifiers
+ * per module file, so keyframes defined only in globals.css don't
+ * resolve when referenced from a .module.css. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+@keyframes drift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(-8deg);
+  }
+  50% {
+    transform: translate(6px, -14px) rotate(-4deg);
+  }
+}

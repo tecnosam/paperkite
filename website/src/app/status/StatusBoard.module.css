@@ -1,0 +1,86 @@
+.board {
+  min-width: 0;
+}
+
+.demoBanner {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--line-strong);
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px 22px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 500;
+  color: var(--ink);
+  transition: opacity var(--fast) var(--ease);
+}
+
+.pulse {
+  animation: flash 400ms var(--ease);
+}
+@keyframes flash {
+  0% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.livenessValue {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 24px;
+}
+
+.dotOnline {
+  color: var(--sky);
+  filter: drop-shadow(0 0 5px var(--sky-glow));
+}
+.dotDegraded {
+  color: #c99b3d;
+}
+.dotOffline {
+  color: var(--accent);
+}
+
+.footnote {
+  margin-top: 18px;
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

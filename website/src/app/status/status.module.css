@@ -1,0 +1,35 @@
+.page {
+  padding-bottom: 90px;
+}
+
+.header {
+  padding: 56px 0 40px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 44px;
+}
+
+.h1 {
+  margin: 14px 0 16px;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.1;
+}
+
+.lede {
+  max-width: 60ch;
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

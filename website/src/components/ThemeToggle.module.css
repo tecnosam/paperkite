@@ -1,0 +1,17 @@
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ink-soft);
+  flex-shrink: 0;
+}
+.toggle:hover {
+  border-color: var(--sky);
+  color: var(--sky);
+  background: var(--hover-wash);
+}
