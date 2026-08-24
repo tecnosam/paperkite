@@ -44,9 +44,9 @@ export function Navbar() {
           <a href={site.githubReleases} target="_blank" rel="noreferrer" className={styles.iconLink} title="GitHub releases">
             <GithubIcon size={17} />
           </a>
-          <a href={site.githubReleases} target="_blank" rel="noreferrer" className="btn btn--primary">
+          <Link href="/download" className="btn btn--primary">
             Download
-          </a>
+          </Link>
           <button
             type="button"
             className={styles.burger}

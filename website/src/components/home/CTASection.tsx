@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { site } from '@/lib/site';
 import { ArrowRightIcon, GithubIcon, KiteMark } from '@/components/icons';
 import styles from './CTASection.module.css';
@@ -12,10 +13,10 @@ export function CTASection() {
           Paperkite is free and open source. Read the source before you trust it with anything.
         </p>
         <div className={styles.ctas}>
-          <a href={site.githubReleases} target="_blank" rel="noreferrer" className="btn btn--primary">
+          <Link href="/download" className="btn btn--primary">
             Download for free
             <ArrowRightIcon size={15} />
-          </a>
+          </Link>
           <a href={site.githubRepo} target="_blank" rel="noreferrer" className="btn btn--ghost">
             <GithubIcon size={16} />
             Star on GitHub

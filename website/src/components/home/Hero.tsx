@@ -33,10 +33,10 @@ export function Hero() {
           </p>
 
           <div className={styles.ctas}>
-            <a href={site.githubReleases} target="_blank" rel="noreferrer" className="btn btn--primary">
+            <Link href="/download" className="btn btn--primary">
               Download Paperkite
               <ArrowRightIcon size={15} />
-            </a>
+            </Link>
             <a href={site.githubRepo} target="_blank" rel="noreferrer" className="btn btn--ghost">
               <GithubIcon size={16} />
               View source

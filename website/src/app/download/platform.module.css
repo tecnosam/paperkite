@@ -1,0 +1,131 @@
+.archGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 44px;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .archGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.archCard {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  box-shadow: var(--shadow-soft);
+  padding: 26px 26px 28px;
+}
+
+.archHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.archHead h2 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.badge {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  background: var(--accent-glow);
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.archNote {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-faint);
+  margin-bottom: 18px;
+}
+
+.formatGroupLabel {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 16px 0 8px;
+}
+.formatGroupLabel:first-of-type {
+  margin-top: 0;
+}
+
+.assetList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.caveat {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--sky-glow);
+  color: var(--sky);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.caveat svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.caveat span {
+  color: var(--ink-soft);
+}
+
+.unavailable {
+  font-size: 13px;
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.checksumLink {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+.checksumLink:hover {
+  color: var(--sky);
+  text-decoration: underline;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--line-strong);
+}
+
+.footLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-faint);
+}
+.footLink:hover {
+  color: var(--sky);
+}

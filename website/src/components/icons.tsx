@@ -153,6 +153,52 @@ export function MoonIcon({ size = 16, className }: IconProps) {
   );
 }
 
+export function WindowsIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" className={className} fill="currentColor" aria-hidden>
+      <path d="M1.5 2.6 7 1.8v5.1H1.5V2.6zM7.7 1.7l7-1v6.2H7.7V1.7zM1.5 7.9H7v5.1l-5.5-.8V7.9zM7.7 7.9h7v6.2l-7-1V7.9z" />
+    </svg>
+  );
+}
+
+export function LinuxIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size} className={className} {...base}>
+      <path d="M8 1.5c1.4 0 2 1.4 2 3 0 .8-.2 1.3-.2 2 .9.5 1.8 1.4 2.1 2.4.3 1 0 2.1-.6 2.8.1.4 0 .9-.3 1.1-.5.4-1.3.2-1.8-.1-.5.3-1.2.5-1.9.5s-1.4-.2-1.9-.5c-.5.3-1.3.5-1.8.1-.3-.2-.4-.7-.3-1.1-.6-.7-.9-1.8-.6-2.8.3-1 1.2-1.9 2.1-2.4 0-.7-.2-1.2-.2-2 0-1.6.6-3 2-3z" strokeLinejoin="round" />
+      <circle cx="6.7" cy="6.3" r="0.5" fill="currentColor" stroke="none" />
+      <circle cx="9.3" cy="6.3" r="0.5" fill="currentColor" stroke="none" />
+      <path d="M6.6 12.5c-.3.6-.3 1.3 0 1.8M9.4 12.5c.3.6.3 1.3 0 1.8" />
+    </svg>
+  );
+}
+
+export function ChipIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size} className={className} {...base}>
+      <rect x="4.5" y="4.5" width="7" height="7" rx="1" />
+      <path d="M6.3 4.5V2.3M9.7 4.5V2.3M6.3 13.7v-2.2M9.7 13.7v-2.2M4.5 6.3H2.3M4.5 9.7H2.3M13.7 6.3h-2.2M13.7 9.7h-2.2" />
+    </svg>
+  );
+}
+
+export function DownloadIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size} className={className} {...base} strokeWidth={1.7}>
+      <path d="M8 2v7.5M4.8 6.8 8 10l3.2-3.2M3 13h10" />
+    </svg>
+  );
+}
+
+export function InfoIcon({ size = 14, className }: IconProps) {
+  return (
+    <svg width={size} height={size} className={className} {...base}>
+      <circle cx="8" cy="8" r="5.5" />
+      <path d="M8 7.3v3.4" strokeLinecap="round" />
+      <circle cx="8" cy="5.2" r="0.15" fill="currentColor" stroke="currentColor" strokeWidth="1" />
+    </svg>
+  );
+}
+
 export function SunIcon({ size = 16, className }: IconProps) {
   return (
     <svg width={size} height={size} className={className} {...base}>
